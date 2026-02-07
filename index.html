@@ -17,7 +17,6 @@
       --shadow: 0 30px 120px rgba(0,0,0,.55);
 
       --blue: rgba(10,132,255,1);
-      --blueSoft: rgba(10,132,255,.55);
 
       --radius: 22px;
       --max: 1120px;
@@ -31,7 +30,7 @@
         --muted: rgba(10,10,10,.70);
         --muted2: rgba(10,10,10,.55);
         --stroke: rgba(10,10,10,.10);
-        --card: rgba(255,255,255,.75);
+        --card: rgba(255,255,255,.78);
         --shadow: 0 24px 90px rgba(0,0,0,.12);
       }
     }
@@ -54,7 +53,7 @@
 
     .wrap{ width:min(var(--max), 100%); margin:0 auto; padding: 0 var(--pad); }
 
-    /* ===== Header (keep position & vibe) ===== */
+    /* ===== Header ===== */
     header{
       position: fixed; left:0; right:0; top:0;
       height:56px; z-index:50;
@@ -65,7 +64,7 @@
     }
     @media (prefers-color-scheme: light){
       header{
-        background: linear-gradient(to bottom, rgba(245,246,248,.88), rgba(245,246,248,.58));
+        background: linear-gradient(to bottom, rgba(245,246,248,.90), rgba(245,246,248,.60));
         border-bottom: 1px solid rgba(10,10,10,.08);
       }
     }
@@ -110,7 +109,6 @@
       box-shadow: 0 0 0 6px rgba(10,132,255,.14);
       transform: translateZ(0);
     }
-    /* blurred “liquid edge” ring */
     .pin::before{
       content:"";
       position:absolute;
@@ -129,7 +127,6 @@
       opacity: .9;
       animation: pinSpin 2.8s linear infinite;
     }
-    /* soft breathing blur */
     .pin::after{
       content:"";
       position:absolute;
@@ -137,7 +134,7 @@
       border-radius: 999px;
       background: radial-gradient(circle, rgba(10,132,255,.22), transparent 62%);
       filter: blur(2px);
-      opacity: .9;
+      opacity:.9;
       animation: pinPulse 2.2s ease-in-out infinite;
     }
     @keyframes pinSpin{ to { transform: rotate(360deg); } }
@@ -146,17 +143,10 @@
       50%{ transform: scale(1.03); opacity: .95; }
     }
 
-    /* ===== Page layout ===== */
+    /* ===== Layout ===== */
     .spacerTop{ height:56px; }
-    .stage{
-      min-height: calc(100vh - 56px);
-      display:grid;
-      place-items:center;
-      padding: clamp(26px, 4vw, 54px) 0;
-      position: relative;
-    }
 
-    /* Ambient background (very subtle) */
+    /* Ambient background */
     .ambient{
       position: fixed;
       inset: -20% -10% -20% -10%;
@@ -186,7 +176,14 @@
       background: radial-gradient(circle at 40% 55%, rgba(48,209,88,.14), transparent 62%);
     }
 
-    main{ position:relative; z-index:1; }
+    main{
+      position:relative;
+      z-index:1;
+      min-height: calc(100vh - 56px);
+      display:grid;
+      place-items:center;
+      padding: clamp(26px, 4vw, 54px) 0;
+    }
 
     /* ===== Cards grid (center) ===== */
     .grid{
@@ -195,9 +192,6 @@
       grid-template-columns: repeat(3, 1fr);
       gap: clamp(12px, 2vw, 18px);
       align-items:stretch;
-      justify-items:stretch;
-      padding: 0;
-      margin: 0;
     }
     @media (max-width: 980px){
       .grid{ grid-template-columns: repeat(2, 1fr); }
@@ -222,9 +216,9 @@
       display:flex;
       flex-direction:column;
       gap: 10px;
+      outline: none;
     }
 
-    /* Apple-like hover lift */
     .testCard:hover{
       transform: translateY(-6px);
       border-color: rgba(255,255,255,.18);
@@ -232,9 +226,11 @@
       background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
     }
     @media (prefers-color-scheme: light){
-      .testCard:hover{
-        box-shadow: 0 16px 54px rgba(0,0,0,.12);
-      }
+      .testCard:hover{ box-shadow: 0 16px 54px rgba(0,0,0,.12); }
+    }
+    .testCard:focus-visible{
+      box-shadow: 0 0 0 4px rgba(10,132,255,.22), 0 18px 60px rgba(0,0,0,.22);
+      border-color: rgba(10,132,255,.40);
     }
 
     .art{
@@ -246,7 +242,6 @@
         radial-gradient(160px 100px at 80% 20%, rgba(175,82,222,.22), transparent 60%),
         radial-gradient(180px 120px at 55% 110%, rgba(48,209,88,.14), transparent 60%),
         rgba(255,255,255,.04);
-      overflow:hidden;
       position:relative;
     }
     .art::after{
@@ -329,7 +324,7 @@
     @media (prefers-color-scheme: light){
       .social{
         border: 1px solid rgba(10,10,10,.10);
-        background: rgba(255,255,255,.70);
+        background: rgba(255,255,255,.72);
       }
     }
     .sbtn{
@@ -366,7 +361,7 @@
     }
     @media (prefers-color-scheme: light){
       .toast{
-        background: rgba(255,255,255,.78);
+        background: rgba(255,255,255,.80);
         color: rgba(10,10,10,.88);
         border: 1px solid rgba(10,10,10,.10);
       }
@@ -376,7 +371,7 @@
       transform: translateX(-50%) translateY(-6px);
     }
 
-    /* ===== Psychologist summary overlay ===== */
+    /* ===== Psychologist overlay (FIXED for iPhone scroll) ===== */
     .overlay{
       position: fixed;
       inset: 0;
@@ -396,11 +391,16 @@
 
     .sheet{
       width: min(920px, 100%);
+      max-height: min(86vh, 760px);
       border-radius: 28px;
       border: 1px solid rgba(255,255,255,.12);
       background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
       box-shadow: var(--shadow);
-      overflow:hidden;
+      overflow: hidden;
+
+      display:flex;
+      flex-direction:column;
+
       transform: translateY(10px) scale(.98);
       opacity:0;
       transition: transform .22s cubic-bezier(.2,.85,.2,1), opacity .22s ease;
@@ -414,6 +414,7 @@
       justify-content:space-between;
       gap: 12px;
       border-bottom: 1px solid rgba(255,255,255,.08);
+      flex: 0 0 auto;
     }
     @media (prefers-color-scheme: light){
       .sheetHead{ border-bottom: 1px solid rgba(10,10,10,.10); }
@@ -450,12 +451,25 @@
       grid-template-columns: 280px 1fr;
       gap: 18px;
       align-items:start;
+
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      flex: 1 1 auto;
     }
     @media (max-width: 880px){
-      .sheetBody{ grid-template-columns: 1fr; }
+      /* iOS-like bottom sheet */
+      .overlay{ align-items: flex-end; padding: 10px; }
+      .sheet{
+        width: 100%;
+        max-height: 90vh;
+        border-radius: 26px 26px 18px 18px;
+      }
+      .sheetBody{
+        grid-template-columns: 1fr;
+        padding: 12px 14px 14px;
+      }
     }
 
-    /* “Only photo in a block” */
     .photoCard{
       border-radius: 22px;
       border: 1px solid var(--stroke);
@@ -464,11 +478,14 @@
     }
     .photoCard img{
       width:100%;
-      height: auto;
       display:block;
+      object-fit: cover;
+      max-height: 360px;
+    }
+    @media (max-width: 880px){
+      .photoCard img{ max-height: 320px; }
     }
 
-    /* Text — clean, “Ive-ish” */
     .bio{
       padding-top: 2px;
     }
@@ -492,7 +509,6 @@
       margin-top: 10px;
     }
 
-    /* Reduced motion */
     @media (prefers-reduced-motion: reduce){
       *{ transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
     }
@@ -513,7 +529,6 @@
           <span class="pin" aria-hidden="true"></span>
           <span class="name">Калачева Людмила Демьяновна</span>
         </button>
-        <!-- справа можно потом добавить что-то, но сейчас оставим воздух -->
         <div style="width:140px;"></div>
       </div>
     </div>
@@ -521,7 +536,7 @@
 
   <div class="spacerTop" aria-hidden="true"></div>
 
-  <main class="stage">
+  <main>
     <div class="wrap" style="display:grid; place-items:center;">
       <div class="grid" aria-label="Список тестов">
 
@@ -529,8 +544,7 @@
         <div class="testCard" data-url="https://ldkalacheva.github.io/psychology-test.ru/" role="button" tabindex="0">
           <div class="art" aria-hidden="true"></div>
           <h3 class="title">Интегральный тип личности</h3>
-          <p class="desc">Быстрый тест общего профиля. </p>
-		  <p class="desc">Для получения результатов необходима интерпретация специалиста.</p>
+          <p class="desc">Быстрый тест для общего профиля. Результат — сразу после прохождения.</p>
           <div class="meta">
             <span class="chip">Открыть</span>
             <span style="display:flex; align-items:center; gap:8px;">
@@ -545,50 +559,35 @@
           <div class="art" aria-hidden="true"></div>
           <h3 class="title">Мы продолжаем работу над тестами</h3>
           <p class="desc">Скоро здесь появятся новые инструменты.</p>
-          <div class="meta">
-            <span class="chip">Скоро</span>
-            <span>в разработке</span>
-          </div>
+          <div class="meta"><span class="chip">Скоро</span><span>В разработке</span></div>
         </div>
 
         <div class="testCard" data-soon="1" role="button" tabindex="0">
           <div class="art" aria-hidden="true"></div>
           <h3 class="title">Мы продолжаем работу над тестами</h3>
           <p class="desc">Скоро здесь появятся новые инструменты.</p>
-          <div class="meta">
-            <span class="chip">Скоро</span>
-            <span>в разработке</span>
-          </div>
+          <div class="meta"><span class="chip">Скоро</span><span>В разработке</span></div>
         </div>
 
         <div class="testCard" data-soon="1" role="button" tabindex="0">
           <div class="art" aria-hidden="true"></div>
           <h3 class="title">Мы продолжаем работу над тестами</h3>
           <p class="desc">Скоро здесь появятся новые инструменты.</p>
-          <div class="meta">
-            <span class="chip">Скоро</span>
-            <span>в разработке</span>
-          </div>
+          <div class="meta"><span class="chip">Скоро</span><span>В разработке</span></div>
         </div>
 
         <div class="testCard" data-soon="1" role="button" tabindex="0">
           <div class="art" aria-hidden="true"></div>
           <h3 class="title">Мы продолжаем работу над тестами</h3>
           <p class="desc">Скоро здесь появятся новые инструменты.</p>
-          <div class="meta">
-            <span class="chip">Скоро</span>
-            <span>в разработке</span>
-          </div>
+          <div class="meta"><span class="chip">Скоро</span><span>В разработке</span></div>
         </div>
 
         <div class="testCard" data-soon="1" role="button" tabindex="0">
           <div class="art" aria-hidden="true"></div>
           <h3 class="title">Мы продолжаем работу над тестами</h3>
-          <p class="desc">Скоро здесь появятся новые инструменты.</p>
-          <div class="meta">
-            <span class="chip">Скоро</span>
-            <span>в разработке</span>
-          </div>
+          <p class="desc">Скоро здесь появятся новые инструменты самодиагностики.</p>
+          <div class="meta"><span class="chip">Скоро</span><span>в разработке</span></div>
         </div>
 
       </div>
@@ -597,47 +596,35 @@
 
   <!-- Social icons bottom-right -->
   <div class="social" aria-label="Социальные сети">
-  <!-- WhatsApp -->
-  <a class="sbtn"
-     href="https://wa.me/79179195228"
-     target="_blank" rel="noopener"
-     aria-label="WhatsApp">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 2a9.6 9.6 0 0 0-8.3 14.4L3 22l5.8-1.6A9.6 9.6 0 1 0 12 2zm0 17.4c-1.1 0-2.1-.2-3.1-.7l-.2-.1-3.4 1 1-3.3-.1-.2A7.8 7.8 0 1 1 12 19.4zm4.6-5.9c-.2-.1-1.3-.6-1.5-.7s-.4-.1-.6.1-.7.7-.8.9-.3.2-.5.1a6.3 6.3 0 0 1-1.9-1.2 7 7 0 0 1-1.3-1.7c-.1-.2 0-.4.1-.5l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.6s-.6-1.4-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.4s-1 1-1 2.5 1 2.9 1.2 3.1c.1.2 2 3.2 5 4.3.7.3 1.2.4 1.6.5.7.2 1.3.2 1.8.1.5-.1 1.3-.5 1.5-1s.2-1 .2-1.1c0-.1-.2-.2-.4-.3z"/>
-    </svg>
-  </a>
+    <!-- WhatsApp -->
+    <a class="sbtn" href="https://wa.me/79179195228" target="_blank" rel="noopener" aria-label="WhatsApp">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2a9.6 9.6 0 0 0-8.3 14.4L3 22l5.8-1.6A9.6 9.6 0 1 0 12 2zm0 17.4c-1.1 0-2.1-.2-3.1-.7l-.2-.1-3.4 1 1-3.3-.1-.2A7.8 7.8 0 1 1 12 19.4zm4.6-5.9c-.2-.1-1.3-.6-1.5-.7s-.4-.1-.6.1-.7.7-.8.9-.3.2-.5.1a6.3 6.3 0 0 1-1.9-1.2 7 7 0 0 1-1.3-1.7c-.1-.2 0-.4.1-.5l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.6s-.6-1.4-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.4s-1 1-1 2.5 1 2.9 1.2 3.1c.1.2 2 3.2 5 4.3.7.3 1.2.4 1.6.5.7.2 1.3.2 1.8.1.5-.1 1.3-.5 1.5-1s.2-1 .2-1.1c0-.1-.2-.2-.4-.3z"/>
+      </svg>
+    </a>
 
-  <!-- Viber -->
-  <a class="sbtn"
-     href="viber://chat?number=%2B79179195228"
-     aria-label="Viber">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M19.5 4.6c-1.6-1.5-4.2-2.2-7.5-2.2S6.1 3.1 4.5 4.6C3 6 2.3 8.2 2.3 11c0 2.2.5 4 1.5 5.4L3 22l5.8-1.6c1 .3 2 .4 3.2.4 3.3 0 5.9-.7 7.5-2.2 1.5-1.4 2.2-3.6 2.2-6.4 0-2.8-.7-5-2.2-6.4zm-2 12.6c-1.1 1-3.1 1.6-5.5 1.6-1 0-1.8-.1-2.6-.3l-.3-.1-3.4 1 1-3.3-.2-.3c-.9-1.2-1.3-2.7-1.3-4.7 0-2.2.5-3.9 1.6-4.9 1.1-1 3.1-1.6 5.5-1.6s4.4.6 5.5 1.6c1.1 1 1.6 2.7 1.6 4.9s-.5 3.9-1.6 4.9z"/>
-      <path d="M14.2 12.9c-.2-.1-.4 0-.5.1l-.6.6c-.1.1-.2.1-.3.1-1-.4-1.8-1.2-2.3-2.1-.1-.1 0-.2 0-.3l.5-.6c.1-.2.1-.4 0-.5l-.7-1.5c-.1-.2-.3-.3-.5-.3h-.5c-.2 0-.4.1-.5.3-.4.5-.6 1.1-.5 1.7.2 1.3 1 2.7 2.2 3.9 1.2 1.2 2.6 2 3.9 2.2.6.1 1.2-.1 1.7-.5.2-.1.3-.3.3-.5v-.5c0-.2-.1-.4-.3-.5l-1.4-.7z"/>
-    </svg>
-  </a>
+    <!-- Viber -->
+    <a class="sbtn" href="viber://chat?number=%2B79179195228" aria-label="Viber">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M19.5 4.6c-1.6-1.5-4.2-2.2-7.5-2.2S6.1 3.1 4.5 4.6C3 6 2.3 8.2 2.3 11c0 2.2.5 4 1.5 5.4L3 22l5.8-1.6c1 .3 2 .4 3.2.4 3.3 0 5.9-.7 7.5-2.2 1.5-1.4 2.2-3.6 2.2-6.4 0-2.8-.7-5-2.2-6.4zm-2 12.6c-1.1 1-3.1 1.6-5.5 1.6-1 0-1.8-.1-2.6-.3l-.3-.1-3.4 1 1-3.3-.2-.3c-.9-1.2-1.3-2.7-1.3-4.7 0-2.2.5-3.9 1.6-4.9 1.1-1 3.1-1.6 5.5-1.6s4.4.6 5.5 1.6c1.1 1 1.6 2.7 1.6 4.9s-.5 3.9-1.6 4.9z"/>
+        <path d="M14.2 12.9c-.2-.1-.4 0-.5.1l-.6.6c-.1.1-.2.1-.3.1-1-.4-1.8-1.2-2.3-2.1-.1-.1 0-.2 0-.3l.5-.6c.1-.2.1-.4 0-.5l-.7-1.5c-.1-.2-.3-.3-.5-.3h-.5c-.2 0-.4.1-.5.3-.4.5-.6 1.1-.5 1.7.2 1.3 1 2.7 2.2 3.9 1.2 1.2 2.6 2 3.9 2.2.6.1 1.2-.1 1.7-.5.2-.1.3-.3.3-.5v-.5c0-.2-.1-.4-.3-.5l-1.4-.7z"/>
+      </svg>
+    </a>
 
-  <!-- Telegram -->
-  <a class="sbtn"
-     href="https://t.me/Lyudmila_D_K"
-     target="_blank" rel="noopener"
-     aria-label="Telegram">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M21.8 4.6c.2-.8-.6-1.5-1.4-1.2L2.9 10.3c-.9.3-.9 1.6.1 1.8l4.8 1.5 1.8 5.6c.3.9 1.5 1 1.9.2l2.6-4.4 4.7 3.4c.7.5 1.7.1 1.9-.8l2.1-13zM9.1 12.9l9.6-6.1c.2-.1.4.2.2.4l-7.9 7.2c-.3.3-.5.7-.4 1.1l.3 2.7-1.5-4.6c-.1-.4.1-.6.4-.7z"/>
-    </svg>
-  </a>
+    <!-- Telegram -->
+    <a class="sbtn" href="https://t.me/Lyudmila_D_K" target="_blank" rel="noopener" aria-label="Telegram">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21.8 4.6c.2-.8-.6-1.5-1.4-1.2L2.9 10.3c-.9.3-.9 1.6.1 1.8l4.8 1.5 1.8 5.6c.3.9 1.5 1 1.9.2l2.6-4.4 4.7 3.4c.7.5 1.7.1 1.9-.8l2.1-13zM9.1 12.9l9.6-6.1c.2-.1.4.2.2.4l-7.9 7.2c-.3.3-.5.7-.4 1.1l.3 2.7-1.5-4.6c-.1-.4.1-.6.4-.7z"/>
+      </svg>
+    </a>
 
-  <!-- VK -->
-  <a class="sbtn"
-     href="https://vk.com/id87306791"
-     target="_blank" rel="noopener"
-     aria-label="ВКонтакте">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12.6 17.7h1.2c.4 0 .7-.3.7-.7 0-.8.4-1.2.9-1.2.5 0 1.2.5 2.2 1.5.2.2.4.3.7.3h2.2c.7 0 1-.8.6-1.3-.5-.6-1.4-1.5-2.3-2.4-.5-.5-.6-.8 0-1.5.8-1 1.7-2.5 2-3.3.2-.5-.2-1-.7-1h-2c-.3 0-.6.2-.7.5-.4.9-1 2.1-1.8 3.1-.4.5-.7.6-1 .4-.4-.2-.4-.7-.4-1.1V8.9c0-.4-.3-.7-.7-.7h-1.9c-.5 0-.9.4-.7 1 .1.3.3.4.3.9v2.2c0 .5-.1.9-.4 1-.2.1-.5.1-.9-.4-.8-1-1.4-2.3-1.9-3.2-.1-.3-.4-.4-.7-.4H3.6c-.5 0-.9.5-.7 1 .4 1 1.6 3.6 3.6 5.7 1.3 1.3 3.2 2.7 6.1 2.7z"/>
-    </svg>
-  </a>
-</div>
-
+    <!-- VK -->
+    <a class="sbtn" href="https://vk.com/id87306791" target="_blank" rel="noopener" aria-label="ВКонтакте">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12.6 17.7h1.2c.4 0 .7-.3.7-.7 0-.8.4-1.2.9-1.2.5 0 1.2.5 2.2 1.5.2.2.4.3.7.3h2.2c.7 0 1-.8.6-1.3-.5-.6-1.4-1.5-2.3-2.4-.5-.5-.6-.8 0-1.5.8-1 1.7-2.5 2-3.3.2-.5-.2-1-.7-1h-2c-.3 0-.6.2-.7.5-.4.9-1 2.1-1.8 3.1-.4.5-.7.6-1 .4-.4-.2-.4-.7-.4-1.1V8.9c0-.4-.3-.7-.7-.7h-1.9c-.5 0-.9.4-.7 1 .1.3.3.4.3.9v2.2c0 .5-.1.9-.4 1-.2.1-.5.1-.9-.4-.8-1-1.4-2.3-1.9-3.2-.1-.3-.4-.4-.7-.4H3.6c-.5 0-.9.5-.7 1 .4 1 1.6 3.6 3.6 5.7 1.3 1.3 3.2 2.7 6.1 2.7z"/>
+      </svg>
+    </a>
+  </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -647,7 +634,7 @@
       <div class="sheetHead">
         <div>
           <p class="sheetTitle" id="bioTitle">Калачева Людмила Демьяновна</p>
-          <p class="sheetSub">Практикующий психолог • Полимодальный подход • Регрессолог</p>
+          <p class="sheetSub">Практикующий психолог • полимодальный подход • регрессолог</p>
         </div>
         <button class="x" type="button" id="closeBio" aria-label="Закрыть">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -657,13 +644,10 @@
       </div>
 
       <div class="sheetBody">
-        <!-- Photo only in a block -->
         <div class="photoCard" aria-label="Фотография">
-          <!-- положи рядом файл ludmila.jpg (из вложения) -->
           <img src="ludmila.jpg" alt="Калачева Людмила Демьяновна" />
         </div>
 
-        <!-- Text (not in blocks) -->
         <div class="bio">
           <h2>Психология, в которой есть ясность.</h2>
 
@@ -675,8 +659,9 @@
 
           <p>
             <strong>Профессиональный статус:</strong> действительный член Общероссийской Профессиональной
-            Психотерапевтической Лиги (ОППЛ), член Российского Балинтовского общества; обучающий личный терапевт ОППЛ и СРО,
-            руководитель Балинтовских групп национального уровня; супервизор ОППЛ; официальный преподаватель национального уровня ОППЛ.
+            Психотерапевтической Лиги (ОППЛ), член Российского Балинтовского общества; обучающий личный терапевт
+            ОППЛ и СРО; руководитель Балинтовских групп национального уровня; супервизор ОППЛ; официальный преподаватель
+            национального уровня ОППЛ.
           </p>
 
           <p>
@@ -705,14 +690,13 @@
   </div>
 
   <script>
-    // ===== Ambient subtle parallax (very light)
+    // ===== Ambient subtle parallax
     const b1 = document.getElementById("b1");
     const b2 = document.getElementById("b2");
     const b3 = document.getElementById("b3");
 
     function onScroll(){
       const y = window.scrollY || 0;
-      // tiny, premium shifts
       b1.style.transform = `translate3d(${y * 0.015}px, ${y * 0.02}px, 0)`;
       b2.style.transform = `translate3d(${y * -0.012}px, ${y * 0.016}px, 0)`;
       b3.style.transform = `translate3d(${y * 0.01}px, ${y * -0.012}px, 0)`;
@@ -721,10 +705,9 @@
     window.addEventListener("resize", onScroll);
     onScroll();
 
-    // ===== Cards behavior
+    // ===== Toast
     const toast = document.getElementById("toast");
     let toastTimer = null;
-
     function showToast(text){
       toast.textContent = text;
       toast.classList.add("show");
@@ -732,6 +715,7 @@
       toastTimer = setTimeout(()=>toast.classList.remove("show"), 1600);
     }
 
+    // ===== Cards behavior
     function handleCardClick(card){
       const url = card.getAttribute("data-url");
       const soon = card.getAttribute("data-soon");
@@ -740,9 +724,7 @@
         showToast("Мы продолжаем работу над тестами");
         return;
       }
-
       if(url){
-        // bounce + delay + redirect
         card.classList.add("loading");
         setTimeout(()=>{ window.location.href = url; }, 520);
       }
@@ -758,7 +740,7 @@
       });
     });
 
-    // ===== Bio overlay (psychologist summary)
+    // ===== Bio overlay
     const overlay = document.getElementById("bioOverlay");
     const openBio = document.getElementById("openBio");
     const closeBio = document.getElementById("closeBio");
@@ -767,7 +749,6 @@
       document.documentElement.style.overflow = lock ? "hidden" : "";
       document.body.style.overflow = lock ? "hidden" : "";
     }
-
     function openOverlay(){
       overlay.classList.add("show");
       overlay.setAttribute("aria-hidden","false");
@@ -782,14 +763,17 @@
 
     openBio.addEventListener("click", openOverlay);
     closeBio.addEventListener("click", closeOverlay);
+    overlay.addEventListener("mousedown", (e)=>{ if(e.target === overlay) closeOverlay(); });
+    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && overlay.classList.contains("show")) closeOverlay(); });
 
-    overlay.addEventListener("mousedown", (e)=>{
-      if(e.target === overlay) closeOverlay();
-    });
-
-    document.addEventListener("keydown", (e)=>{
-      if(e.key === "Escape" && overlay.classList.contains("show")) closeOverlay();
-    });
+    // iOS: prevent background “rubber band” when sheet scrolls
+    overlay.addEventListener("touchmove", (e)=>{
+      if(!overlay.classList.contains("show")) return;
+      // allow scrolling inside sheetBody only
+      const sheetBody = overlay.querySelector(".sheetBody");
+      if(sheetBody && sheetBody.contains(e.target)) return;
+      e.preventDefault();
+    }, { passive:false });
   </script>
 </body>
 </html>
