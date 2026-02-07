@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>Тесты — Калачева Людмила Демьяновна</title>
+
+  <style>
+    :root{
+      --bg: #000;
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --muted2: rgba(255,255,255,.56);
+      --stroke: rgba(255,255,255,.10);
+      --card: rgba(255,255,255,.06);
+      --shadow: 0 30px 120px rgba(0,0,0,.55);
+
+      --blue: rgba(10,132,255,1);
+      --blueSoft: rgba(10,132,255,.55);
+
+      --radius: 22px;
+      --max: 1120px;
+      --pad: clamp(18px, 3.2vw, 34px);
+    }
+
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg: #f5f6f8;
+        --text: rgba(10,10,10,.92);
+        --muted: rgba(10,10,10,.70);
+        --muted2: rgba(10,10,10,.55);
+        --stroke: rgba(10,10,10,.10);
+        --card: rgba(255,255,255,.75);
+        --shadow: 0 24px 90px rgba(0,0,0,.12);
+      }
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display",
+        "Segoe UI", Roboto, Inter, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+      letter-spacing:-0.01em;
+      line-height:1.45;
+      overflow-x:hidden;
+    }
+    a{ color:inherit; text-decoration:none; }
+    button{ font:inherit; }
+    ::selection{ background: rgba(10,132,255,.26); }
+
+    .wrap{ width:min(var(--max), 100%); margin:0 auto; padding: 0 var(--pad); }
+
+    /* ===== Header (keep position & vibe) ===== */
+    header{
+      position: fixed; left:0; right:0; top:0;
+      height:56px; z-index:50;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,.12));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    @media (prefers-color-scheme: light){
+      header{
+        background: linear-gradient(to bottom, rgba(245,246,248,.88), rgba(245,246,248,.58));
+        border-bottom: 1px solid rgba(10,10,10,.08);
+      }
+    }
+    .nav{
+      height:56px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .brandBtn{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background: transparent;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 12px;
+      transition: background .18s ease, transform .18s ease;
+    }
+    .brandBtn:hover{ background: rgba(255,255,255,.05); transform: translateY(-1px); }
+    .brandBtn:active{ transform: translateY(0) scale(.99); }
+
+    .name{
+      font-weight: 650;
+      font-size: 14px;
+      letter-spacing: -0.02em;
+      white-space:nowrap;
+    }
+
+    /* ===== Interactive Blue Pin ===== */
+    .pin{
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--blue);
+      position: relative;
+      flex: 0 0 auto;
+      box-shadow: 0 0 0 6px rgba(10,132,255,.14);
+      transform: translateZ(0);
+    }
+    /* blurred “liquid edge” ring */
+    .pin::before{
+      content:"";
+      position:absolute;
+      inset:-10px;
+      border-radius: 999px;
+      background:
+        conic-gradient(
+          from 0deg,
+          rgba(10,132,255,.00),
+          rgba(10,132,255,.35),
+          rgba(10,132,255,.00),
+          rgba(10,132,255,.28),
+          rgba(10,132,255,.00)
+        );
+      filter: blur(6px);
+      opacity: .9;
+      animation: pinSpin 2.8s linear infinite;
+    }
+    /* soft breathing blur */
+    .pin::after{
+      content:"";
+      position:absolute;
+      inset:-14px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(10,132,255,.22), transparent 62%);
+      filter: blur(2px);
+      opacity: .9;
+      animation: pinPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pinSpin{ to { transform: rotate(360deg); } }
+    @keyframes pinPulse{
+      0%,100%{ transform: scale(.94); opacity: .65; }
+      50%{ transform: scale(1.03); opacity: .95; }
+    }
+
+    /* ===== Page layout ===== */
+    .spacerTop{ height:56px; }
+    .stage{
+      min-height: calc(100vh - 56px);
+      display:grid;
+      place-items:center;
+      padding: clamp(26px, 4vw, 54px) 0;
+      position: relative;
+    }
+
+    /* Ambient background (very subtle) */
+    .ambient{
+      position: fixed;
+      inset: -20% -10% -20% -10%;
+      pointer-events:none;
+      z-index:0;
+    }
+    .blob{
+      position:absolute;
+      border-radius: 999px;
+      filter: blur(42px);
+      opacity: .62;
+      will-change: transform;
+    }
+    .b1{
+      width: 620px; height: 620px;
+      left: -180px; top: -180px;
+      background: radial-gradient(circle at 30% 30%, rgba(10,132,255,.30), transparent 60%);
+    }
+    .b2{
+      width: 760px; height: 760px;
+      right: -220px; top: 0px;
+      background: radial-gradient(circle at 45% 35%, rgba(175,82,222,.22), transparent 62%);
+    }
+    .b3{
+      width: 760px; height: 760px;
+      left: 25%; bottom: -260px;
+      background: radial-gradient(circle at 40% 55%, rgba(48,209,88,.14), transparent 62%);
+    }
+
+    main{ position:relative; z-index:1; }
+
+    /* ===== Cards grid (center) ===== */
+    .grid{
+      width: min(980px, 100%);
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(12px, 2vw, 18px);
+      align-items:stretch;
+      justify-items:stretch;
+      padding: 0;
+      margin: 0;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 620px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .testCard{
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border-radius: 22px;
+      padding: 16px 16px 14px;
+      cursor:pointer;
+      position:relative;
+      overflow:hidden;
+      user-select:none;
+      transform: translateY(0);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+      box-shadow: none;
+      min-height: 150px;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+
+    /* Apple-like hover lift */
+    .testCard:hover{
+      transform: translateY(-6px);
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 18px 60px rgba(0,0,0,.30);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+    }
+    @media (prefers-color-scheme: light){
+      .testCard:hover{
+        box-shadow: 0 16px 54px rgba(0,0,0,.12);
+      }
+    }
+
+    .art{
+      height: 62px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(160px 100px at 25% 40%, rgba(10,132,255,.28), transparent 60%),
+        radial-gradient(160px 100px at 80% 20%, rgba(175,82,222,.22), transparent 60%),
+        radial-gradient(180px 120px at 55% 110%, rgba(48,209,88,.14), transparent 60%),
+        rgba(255,255,255,.04);
+      overflow:hidden;
+      position:relative;
+    }
+    .art::after{
+      content:"";
+      position:absolute; inset:-40%;
+      background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.12), transparent 55%);
+      transform: rotate(18deg);
+      opacity:.7;
+    }
+
+    .title{
+      margin:0;
+      font-weight: 740;
+      letter-spacing:-0.02em;
+      font-size: 16px;
+      line-height: 1.15;
+    }
+    .desc{
+      margin:0;
+      color: var(--muted);
+      font-size: 13.5px;
+      line-height: 1.35;
+      max-width: 52ch;
+    }
+    .meta{
+      margin-top:auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      color: var(--muted2);
+      font-size: 12.5px;
+    }
+    .chip{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      padding: 6px 10px;
+      border-radius: 999px;
+      white-space:nowrap;
+    }
+
+    /* Click bounce “loading” */
+    .testCard.loading{
+      animation: popBounce .55s ease;
+      pointer-events:none;
+    }
+    @keyframes popBounce{
+      0%{ transform: translateY(0) scale(1); }
+      30%{ transform: translateY(-10px) scale(1.01); }
+      55%{ transform: translateY(2px) scale(.995); }
+      100%{ transform: translateY(0) scale(1); }
+    }
+    .spinner{
+      width:14px; height:14px;
+      border-radius:999px;
+      border: 2px solid rgba(255,255,255,.22);
+      border-top-color: rgba(255,255,255,.72);
+      animation: spin .7s linear infinite;
+      display:none;
+    }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+    .testCard.loading .spinner{ display:inline-block; }
+
+    /* ===== Bottom-right social icons ===== */
+    .social{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 55;
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      padding: 10px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.20);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    @media (prefers-color-scheme: light){
+      .social{
+        border: 1px solid rgba(10,10,10,.10);
+        background: rgba(255,255,255,.70);
+      }
+    }
+    .sbtn{
+      width: 36px; height: 36px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      display:grid; place-items:center;
+      color: var(--muted);
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+    .sbtn:hover{ transform: translateY(-2px); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.18); }
+    .sbtn:active{ transform: translateY(0) scale(.99); }
+    .sbtn svg{ width:18px; height:18px; fill: currentColor; }
+
+    /* ===== Toast ===== */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      z-index: 70;
+      padding: 12px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.32);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: rgba(255,255,255,.90);
+      font-size: 13px;
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    @media (prefers-color-scheme: light){
+      .toast{
+        background: rgba(255,255,255,.78);
+        color: rgba(10,10,10,.88);
+        border: 1px solid rgba(10,10,10,.10);
+      }
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(-6px);
+    }
+
+    /* ===== Psychologist summary overlay ===== */
+    .overlay{
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      background: rgba(0,0,0,.48);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    @media (prefers-color-scheme: light){
+      .overlay{ background: rgba(10,10,10,.20); }
+    }
+    .overlay.show{ display:flex; }
+
+    .sheet{
+      width: min(920px, 100%);
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      transform: translateY(10px) scale(.98);
+      opacity:0;
+      transition: transform .22s cubic-bezier(.2,.85,.2,1), opacity .22s ease;
+    }
+    .overlay.show .sheet{ transform: translateY(0) scale(1); opacity:1; }
+
+    .sheetHead{
+      padding: 16px 18px 12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    @media (prefers-color-scheme: light){
+      .sheetHead{ border-bottom: 1px solid rgba(10,10,10,.10); }
+    }
+    .sheetTitle{
+      margin:0;
+      font-weight: 740;
+      letter-spacing:-0.02em;
+      font-size: 16px;
+    }
+    .sheetSub{
+      margin:6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      max-width: 70ch;
+    }
+    .x{
+      width: 36px; height: 36px;
+      border-radius: 12px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      cursor:pointer;
+      display:grid; place-items:center;
+      transition: transform .18s ease, background .18s ease;
+      flex:0 0 auto;
+    }
+    .x:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
+    .x:active{ transform: translateY(0) scale(.99); }
+
+    .sheetBody{
+      padding: 14px 18px 18px;
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      gap: 18px;
+      align-items:start;
+    }
+    @media (max-width: 880px){
+      .sheetBody{ grid-template-columns: 1fr; }
+    }
+
+    /* “Only photo in a block” */
+    .photoCard{
+      border-radius: 22px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      overflow:hidden;
+    }
+    .photoCard img{
+      width:100%;
+      height: auto;
+      display:block;
+    }
+
+    /* Text — clean, “Ive-ish” */
+    .bio{
+      padding-top: 2px;
+    }
+    .bio h2{
+      margin: 0 0 10px;
+      font-size: clamp(22px, 2.6vw, 30px);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      font-weight: 760;
+    }
+    .bio p{
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 15.5px;
+      max-width: 80ch;
+    }
+    .bio p strong{ color: var(--text); font-weight: 740; }
+    .bio .small{
+      color: var(--muted2);
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      *{ transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="ambient" aria-hidden="true">
+    <div class="blob b1" id="b1"></div>
+    <div class="blob b2" id="b2"></div>
+    <div class="blob b3" id="b3"></div>
+  </div>
+
+  <header>
+    <div class="wrap">
+      <div class="nav">
+        <button class="brandBtn" id="openBio" type="button" aria-label="О специалисте">
+          <span class="pin" aria-hidden="true"></span>
+          <span class="name">Калачева Людмила Демьяновна</span>
+        </button>
+        <!-- справа можно потом добавить что-то, но сейчас оставим воздух -->
+        <div style="width:140px;"></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="spacerTop" aria-hidden="true"></div>
+
+  <main class="stage">
+    <div class="wrap" style="display:grid; place-items:center;">
+      <div class="grid" aria-label="Список тестов">
+
+        <!-- 1) Active test -->
+        <div class="testCard" data-url="https://ldkalacheva.github.io/psychology-test.ru/" role="button" tabindex="0">
+          <div class="art" aria-hidden="true"></div>
+          <h3 class="title">Интегральный тип личности</h3>
+          <p class="desc">Быстрый тест общего профиля. </p>
+		  <p class="desc">Для получения результатов необходима интерпретация специалиста.</p>
+          <div class="meta">
+            <span class="chip">Открыть</span>
+            <span style="display:flex; align-items:center; gap:8px;">
+              <span class="spinner" aria-hidden="true"></span>
+              <span>≈ 10–15 мин</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- 2..6 placeholders -->
+        <div class="testCard" data-soon="1" role="button" tabindex="0">
+          <div class="art" aria-hidden="true"></div>
+          <h3 class="title">Мы продолжаем работу над тестами</h3>
+          <p class="desc">Скоро здесь появятся новые инструменты.</p>
+          <div class="meta">
+            <span class="chip">Скоро</span>
+            <span>в разработке</span>
+          </div>
+        </div>
+
+        <div class="testCard" data-soon="1" role="button" tabindex="0">
+          <div class="art" aria-hidden="true"></div>
+          <h3 class="title">Мы продолжаем работу над тестами</h3>
+          <p class="desc">Скоро здесь появятся новые инструменты.</p>
+          <div class="meta">
+            <span class="chip">Скоро</span>
+            <span>в разработке</span>
+          </div>
+        </div>
+
+        <div class="testCard" data-soon="1" role="button" tabindex="0">
+          <div class="art" aria-hidden="true"></div>
+          <h3 class="title">Мы продолжаем работу над тестами</h3>
+          <p class="desc">Скоро здесь появятся новые инструменты.</p>
+          <div class="meta">
+            <span class="chip">Скоро</span>
+            <span>в разработке</span>
+          </div>
+        </div>
+
+        <div class="testCard" data-soon="1" role="button" tabindex="0">
+          <div class="art" aria-hidden="true"></div>
+          <h3 class="title">Мы продолжаем работу над тестами</h3>
+          <p class="desc">Скоро здесь появятся новые инструменты.</p>
+          <div class="meta">
+            <span class="chip">Скоро</span>
+            <span>в разработке</span>
+          </div>
+        </div>
+
+        <div class="testCard" data-soon="1" role="button" tabindex="0">
+          <div class="art" aria-hidden="true"></div>
+          <h3 class="title">Мы продолжаем работу над тестами</h3>
+          <p class="desc">Скоро здесь появятся новые инструменты.</p>
+          <div class="meta">
+            <span class="chip">Скоро</span>
+            <span>в разработке</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Social icons bottom-right -->
+  <div class="social" aria-label="Социальные сети">
+  <!-- WhatsApp -->
+  <a class="sbtn"
+     href="https://wa.me/79179195228"
+     target="_blank" rel="noopener"
+     aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 2a9.6 9.6 0 0 0-8.3 14.4L3 22l5.8-1.6A9.6 9.6 0 1 0 12 2zm0 17.4c-1.1 0-2.1-.2-3.1-.7l-.2-.1-3.4 1 1-3.3-.1-.2A7.8 7.8 0 1 1 12 19.4zm4.6-5.9c-.2-.1-1.3-.6-1.5-.7s-.4-.1-.6.1-.7.7-.8.9-.3.2-.5.1a6.3 6.3 0 0 1-1.9-1.2 7 7 0 0 1-1.3-1.7c-.1-.2 0-.4.1-.5l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.6s-.6-1.4-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.4s-1 1-1 2.5 1 2.9 1.2 3.1c.1.2 2 3.2 5 4.3.7.3 1.2.4 1.6.5.7.2 1.3.2 1.8.1.5-.1 1.3-.5 1.5-1s.2-1 .2-1.1c0-.1-.2-.2-.4-.3z"/>
+    </svg>
+  </a>
+
+  <!-- Viber -->
+  <a class="sbtn"
+     href="viber://chat?number=%2B79179195228"
+     aria-label="Viber">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M19.5 4.6c-1.6-1.5-4.2-2.2-7.5-2.2S6.1 3.1 4.5 4.6C3 6 2.3 8.2 2.3 11c0 2.2.5 4 1.5 5.4L3 22l5.8-1.6c1 .3 2 .4 3.2.4 3.3 0 5.9-.7 7.5-2.2 1.5-1.4 2.2-3.6 2.2-6.4 0-2.8-.7-5-2.2-6.4zm-2 12.6c-1.1 1-3.1 1.6-5.5 1.6-1 0-1.8-.1-2.6-.3l-.3-.1-3.4 1 1-3.3-.2-.3c-.9-1.2-1.3-2.7-1.3-4.7 0-2.2.5-3.9 1.6-4.9 1.1-1 3.1-1.6 5.5-1.6s4.4.6 5.5 1.6c1.1 1 1.6 2.7 1.6 4.9s-.5 3.9-1.6 4.9z"/>
+      <path d="M14.2 12.9c-.2-.1-.4 0-.5.1l-.6.6c-.1.1-.2.1-.3.1-1-.4-1.8-1.2-2.3-2.1-.1-.1 0-.2 0-.3l.5-.6c.1-.2.1-.4 0-.5l-.7-1.5c-.1-.2-.3-.3-.5-.3h-.5c-.2 0-.4.1-.5.3-.4.5-.6 1.1-.5 1.7.2 1.3 1 2.7 2.2 3.9 1.2 1.2 2.6 2 3.9 2.2.6.1 1.2-.1 1.7-.5.2-.1.3-.3.3-.5v-.5c0-.2-.1-.4-.3-.5l-1.4-.7z"/>
+    </svg>
+  </a>
+
+  <!-- Telegram -->
+  <a class="sbtn"
+     href="https://t.me/Lyudmila_D_K"
+     target="_blank" rel="noopener"
+     aria-label="Telegram">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M21.8 4.6c.2-.8-.6-1.5-1.4-1.2L2.9 10.3c-.9.3-.9 1.6.1 1.8l4.8 1.5 1.8 5.6c.3.9 1.5 1 1.9.2l2.6-4.4 4.7 3.4c.7.5 1.7.1 1.9-.8l2.1-13zM9.1 12.9l9.6-6.1c.2-.1.4.2.2.4l-7.9 7.2c-.3.3-.5.7-.4 1.1l.3 2.7-1.5-4.6c-.1-.4.1-.6.4-.7z"/>
+    </svg>
+  </a>
+
+  <!-- VK -->
+  <a class="sbtn"
+     href="https://vk.com/id87306791"
+     target="_blank" rel="noopener"
+     aria-label="ВКонтакте">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12.6 17.7h1.2c.4 0 .7-.3.7-.7 0-.8.4-1.2.9-1.2.5 0 1.2.5 2.2 1.5.2.2.4.3.7.3h2.2c.7 0 1-.8.6-1.3-.5-.6-1.4-1.5-2.3-2.4-.5-.5-.6-.8 0-1.5.8-1 1.7-2.5 2-3.3.2-.5-.2-1-.7-1h-2c-.3 0-.6.2-.7.5-.4.9-1 2.1-1.8 3.1-.4.5-.7.6-1 .4-.4-.2-.4-.7-.4-1.1V8.9c0-.4-.3-.7-.7-.7h-1.9c-.5 0-.9.4-.7 1 .1.3.3.4.3.9v2.2c0 .5-.1.9-.4 1-.2.1-.5.1-.9-.4-.8-1-1.4-2.3-1.9-3.2-.1-.3-.4-.4-.7-.4H3.6c-.5 0-.9.5-.7 1 .4 1 1.6 3.6 3.6 5.7 1.3 1.3 3.2 2.7 6.1 2.7z"/>
+    </svg>
+  </a>
+</div>
+
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Psychologist overlay -->
+  <div class="overlay" id="bioOverlay" aria-hidden="true">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="bioTitle">
+      <div class="sheetHead">
+        <div>
+          <p class="sheetTitle" id="bioTitle">Калачева Людмила Демьяновна</p>
+          <p class="sheetSub">Практикующий психолог • Полимодальный подход • Регрессолог</p>
+        </div>
+        <button class="x" type="button" id="closeBio" aria-label="Закрыть">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7 7l10 10M17 7L7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sheetBody">
+        <!-- Photo only in a block -->
+        <div class="photoCard" aria-label="Фотография">
+          <!-- положи рядом файл ludmila.jpg (из вложения) -->
+          <img src="ludmila.jpg" alt="Калачева Людмила Демьяновна" />
+        </div>
+
+        <!-- Text (not in blocks) -->
+        <div class="bio">
+          <h2>Психология, в которой есть ясность.</h2>
+
+          <p>
+            Я работаю там, где человеку важно снова почувствовать опору — в себе, в решениях, в отношениях и в жизни.
+            <strong>Бережно</strong>, без давления. И при этом <strong>точно</strong>: мы не “поговорим и разойдёмся”,
+            а соберём понимание и шаги, которые можно выполнить и удержать.
+          </p>
+
+          <p>
+            <strong>Профессиональный статус:</strong> действительный член Общероссийской Профессиональной
+            Психотерапевтической Лиги (ОППЛ), член Российского Балинтовского общества; обучающий личный терапевт ОППЛ и СРО,
+            руководитель Балинтовских групп национального уровня; супервизор ОППЛ; официальный преподаватель национального уровня ОППЛ.
+          </p>
+
+          <p>
+            Мой путь — из науки: в прошлом я преподавала биологию в высшей школе и являюсь кандидатом биологических наук.
+            Интерес к психике появился закономерно — от изучения закономерностей жизни к человеку и к тому,
+            что “управляет” нашим опытом: к психике.
+          </p>
+
+          <p>
+            В 2014 году я прошла профессиональную переподготовку по специальности «Психолог» и начала практику.
+            С 2021 года работаю в онлайн-проекте «Брейн-Билд» — наставник, тренер и ведущая интервизорских групп для психологов.
+          </p>
+
+          <p>
+            <strong>С чем работаю:</strong> внутриличностные конфликты (неуверенность, самооценка, смысл, самопознание),
+            кризисы отношений (конфликты в паре, разводы, созависимость, детско-родительские отношения),
+            тревожные состояния (страхи, панические атаки, ПТСР, травмы развития), а также тематикой денег.
+          </p>
+
+          <p class="small">
+            Всё, что здесь происходит — про качество жизни: проще дышать, яснее думать, спокойнее выбирать.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Ambient subtle parallax (very light)
+    const b1 = document.getElementById("b1");
+    const b2 = document.getElementById("b2");
+    const b3 = document.getElementById("b3");
+
+    function onScroll(){
+      const y = window.scrollY || 0;
+      // tiny, premium shifts
+      b1.style.transform = `translate3d(${y * 0.015}px, ${y * 0.02}px, 0)`;
+      b2.style.transform = `translate3d(${y * -0.012}px, ${y * 0.016}px, 0)`;
+      b3.style.transform = `translate3d(${y * 0.01}px, ${y * -0.012}px, 0)`;
+    }
+    window.addEventListener("scroll", onScroll, { passive:true });
+    window.addEventListener("resize", onScroll);
+    onScroll();
+
+    // ===== Cards behavior
+    const toast = document.getElementById("toast");
+    let toastTimer = null;
+
+    function showToast(text){
+      toast.textContent = text;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>toast.classList.remove("show"), 1600);
+    }
+
+    function handleCardClick(card){
+      const url = card.getAttribute("data-url");
+      const soon = card.getAttribute("data-soon");
+
+      if(soon){
+        showToast("Мы продолжаем работу над тестами");
+        return;
+      }
+
+      if(url){
+        // bounce + delay + redirect
+        card.classList.add("loading");
+        setTimeout(()=>{ window.location.href = url; }, 520);
+      }
+    }
+
+    document.querySelectorAll(".testCard").forEach(card => {
+      card.addEventListener("click", ()=>handleCardClick(card));
+      card.addEventListener("keydown", (e)=>{
+        if(e.key === "Enter" || e.key === " "){
+          e.preventDefault();
+          handleCardClick(card);
+        }
+      });
+    });
+
+    // ===== Bio overlay (psychologist summary)
+    const overlay = document.getElementById("bioOverlay");
+    const openBio = document.getElementById("openBio");
+    const closeBio = document.getElementById("closeBio");
+
+    function lockScroll(lock){
+      document.documentElement.style.overflow = lock ? "hidden" : "";
+      document.body.style.overflow = lock ? "hidden" : "";
+    }
+
+    function openOverlay(){
+      overlay.classList.add("show");
+      overlay.setAttribute("aria-hidden","false");
+      lockScroll(true);
+      setTimeout(()=>closeBio.focus(), 60);
+    }
+    function closeOverlay(){
+      overlay.classList.remove("show");
+      overlay.setAttribute("aria-hidden","true");
+      lockScroll(false);
+    }
+
+    openBio.addEventListener("click", openOverlay);
+    closeBio.addEventListener("click", closeOverlay);
+
+    overlay.addEventListener("mousedown", (e)=>{
+      if(e.target === overlay) closeOverlay();
+    });
+
+    document.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape" && overlay.classList.contains("show")) closeOverlay();
+    });
+  </script>
+</body>
+</html>
